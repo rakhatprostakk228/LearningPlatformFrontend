@@ -13,7 +13,7 @@ const CourseList = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await axios.get('https://learningplatformbackend-wz8g.onrender.com/api/courses');
+        const response = await axios.get('/courses');
         console.log('API Response:', response.data);
         
         if (Array.isArray(response.data)) {
@@ -42,7 +42,7 @@ const CourseList = () => {
       }
 
       const response = await axios.post(
-        `https://learningplatformbackend-wz8g.onrender.com/api/courses/enroll/${courseId}`,
+        `/courses/enroll/${courseId}`,
         {},
         {
           headers: {
