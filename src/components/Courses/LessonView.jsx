@@ -4,6 +4,8 @@ import axios from 'axios';
 import VideoPlayer from '../VideoPlayer';
 import Quiz from './Quiz';
 
+const API_URL = 'https://learningplatformbackend-grqq.onrender.com/api';
+
 const LessonView = () => {
   const { courseId, lessonIndex } = useParams();
   const [course, setCourse] = useState(null);
@@ -22,7 +24,7 @@ const LessonView = () => {
         }
 
         const response = await axios.get(
-          `http://localhost:5000/api/courses/${courseId}`,
+          `${API_URL}/courses/${courseId}`,
           {
             headers: {
               'Authorization': `Bearer ${token}`

@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+const API_URL = 'https://learningplatformbackend-grqq.onrender.com/api';
+
 const CourseDetail = () => {
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -14,7 +16,7 @@ const CourseDetail = () => {
     const fetchCourseDetails = async () => {
       try {
         console.log('Fetching course:', courseId);
-        const response = await axios.get(`http://localhost:5000/api/courses/${courseId}`);
+        const response = await axios.get(`${API_URL}/courses/${courseId}`);
         console.log('Course data:', response.data);
         setCourse(response.data);
       } catch (err) {

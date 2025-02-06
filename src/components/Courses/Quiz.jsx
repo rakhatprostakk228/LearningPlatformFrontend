@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+const API_URL = 'https://learningplatformbackend-grqq.onrender.com/api';
+
 const Quiz = ({ quiz, lessonId }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState({});
@@ -15,7 +17,7 @@ const Quiz = ({ quiz, lessonId }) => {
     const fetchQuizProgress = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/courses/lessons/${lessonId}/quiz-progress`,
+          `${API_URL}/courses/lessons/${lessonId}/quiz-progress`,
           {
             headers: {
               'Authorization': `Bearer ${localStorage.getItem('token')}`
