@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; // Добавляем импорт
 
 axios.defaults.withCredentials = true;
+const API_URL = 'https://learningplatformbackend-grqq.onrender.com/api';
 
 const CourseList = () => {
   const [courses, setCourses] = useState([]);
@@ -13,7 +14,7 @@ const CourseList = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/courses`);
+        const response = await axios.get(`${API_URL}/courses`);
         console.log('API Response:', response.data);
         
         if (Array.isArray(response.data)) {
