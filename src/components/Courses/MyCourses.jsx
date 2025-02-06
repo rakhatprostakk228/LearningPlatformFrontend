@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import CourseProgress from './CourseProgress';
 
+const API_URL = 'https://learningplatformbackend-grqq.onrender.com/api';
+
 const MyCourses = () => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -19,7 +21,7 @@ const MyCourses = () => {
           return;
         }
 
-        const response = await axios.get('http://localhost:5000/api/courses/my-courses', {
+        const response = await axios.get(`${API_URL}/courses/my-courses`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
