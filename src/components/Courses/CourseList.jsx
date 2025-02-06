@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; // Добавляем импорт
 
+axios.defaults.withCredentials = true;
+
 const CourseList = () => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -40,7 +42,7 @@ const CourseList = () => {
       }
 
       const response = await axios.post(
-        `http://localhost:5000/api/courses/enroll/${courseId}`,
+        `https://learningplatformbackend-wz8g.onrender.com/api/courses/enroll/${courseId}`,
         {},
         {
           headers: {
