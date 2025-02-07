@@ -113,27 +113,32 @@ const Profile = ({ user }) => {
           <div className="mt-6">
             <h4 className="text-lg font-semibold mb-3">My Courses</h4>
             <div className="space-y-4">
-              {enrolledCourses.map(course => (
-                <div key={course._id} className="bg-gray-50 rounded-lg p-4">
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-2 sm:space-y-0">
-                    <h5 className="font-medium">{course.title}</h5>
-                    <div className="flex space-x-2 w-full sm:w-auto">
-                      <button
-                        onClick={() => navigate(`/courses/${course._id}`)}
-                        className="flex-1 sm:flex-none text-center bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600 transition-colors"
-                      >
-                        Continue
-                      </button>
-                      <button
-                        onClick={() => handleUnenroll(course._id)}
-                        className="flex-1 sm:flex-none text-center bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600 transition-colors"
-                      >
-                        Unenroll
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
+            {enrolledCourses.map(course => (
+  <div key={course._id} className="bg-gray-50 rounded-lg p-4">
+    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-2 sm:space-y-0">
+      <div>
+        <h5 className="font-medium">{course.title}</h5>
+        <span className={`text-sm ${course.paymentStatus === 'completed' ? 'text-green-600' : 'text-yellow-600'}`}>
+          {course.paymentStatus === 'completed' ? 'Оплачено' : 'Не оплачено'}
+        </span>
+      </div>
+      <div className="flex space-x-2 w-full sm:w-auto">
+        <button
+          onClick={() => navigate(`/courses/${course._id}`)}
+          className="flex-1 sm:flex-none text-center bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600 transition-colors"
+        >
+          Continue
+        </button>
+        <button
+          onClick={() => handleUnenroll(course._id)}
+          className="flex-1 sm:flex-none text-center bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600 transition-colors"
+        >
+          Unenroll
+        </button>
+      </div>
+    </div>
+  </div>
+))}
               {enrolledCourses.length === 0 && (
                 <p className="text-gray-500 text-center py-4">No courses enrolled yet</p>
               )}

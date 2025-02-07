@@ -2,24 +2,22 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 const PaymentForm = ({ course, onSuccess, onCancel }) => {
-  const [cardNumber, setCardNumber] = useState('');
-  const [expiryDate, setExpiryDate] = useState('');
-  const [cvv, setCvv] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
-
+    
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
       await axios.post(`/api/courses/${course._id}/payment`, {
         status: 'completed'
+      }, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
       });
-
+      
       onSuccess();
     } catch (err) {
       setError(err.response?.data?.message || 'Ошибка при оплате');
@@ -46,11 +44,8 @@ const PaymentForm = ({ course, onSuccess, onCancel }) => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block mb-1">Номер карты</label>
             <input
               type="text"
-              value={cardNumber}
-              onChange={(e) => setCardNumber(e.target.value)}
               placeholder="1234 5678 9012 3456"
               className="w-full border p-2 rounded"
               required
@@ -58,28 +53,18 @@ const PaymentForm = ({ course, onSuccess, onCancel }) => {
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block mb-1">Срок действия</label>
-              <input
-                type="text"
-                value={expiryDate}
-                onChange={(e) => setExpiryDate(e.target.value)}
-                placeholder="MM/YY"
-                className="w-full border p-2 rounded"
-                required
-              />
-            </div>
-            <div>
-              <label className="block mb-1">CVV</label>
-              <input
-                type="text"
-                value={cvv}
-                onChange={(e) => setCvv(e.target.value)}
-                placeholder="123"
-                className="w-full border p-2 rounded"
-                required
-              />
-            </div>
+            <input
+              type="text"
+              placeholder="MM/YY"
+              className="w-full border p-2 rounded"
+              required
+            />
+            <input
+              type="text"
+              placeholder="CVV"
+              className="w-full border p-2 rounded"
+              required
+            />
           </div>
 
           <div className="flex space-x-4">
