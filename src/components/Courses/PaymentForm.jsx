@@ -14,10 +14,8 @@ const PaymentForm = ({ course, onSuccess, onCancel }) => {
     setError('');
 
     try {
-      // Имитация запроса оплаты
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Обновляем статус оплаты курса
       await axios.post(`/api/courses/${course._id}/payment`, {
         status: 'completed'
       });
