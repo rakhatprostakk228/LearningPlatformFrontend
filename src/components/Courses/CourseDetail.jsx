@@ -1,6 +1,6 @@
-// src/components/Courses/CourseDetail.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import PaymentForm from './PaymentForm';
 import axios from 'axios';
 
 const API_URL = 'https://learningplatformbackend-grqq.onrender.com/api';
@@ -10,6 +10,7 @@ const CourseDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { courseId } = useParams();
+  const [showPayment, setShowPayment] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -109,29 +110,41 @@ const CourseDetail = () => {
                   try {
                     const token = localStorage.getItem('token');
                     if (!token) {
-                      alert('Please login to enroll');
+                      alert('Пожалуйста, войдите в систему');
                       return;
                     }
-                    
-                    await axios.post(
-                      `http://localhost:5000/api/courses/enroll/${course._id}`,
-                      {},
-                      {
-                        headers: {
-                          'Authorization': `Bearer ${token}`
-                        }
-                      }
-                    );
-                    alert('Successfully enrolled in course!');
-                    navigate('/courses'); // Перенаправляем на страницу моих курсов
+                    setShowPayment(true);
                   } catch (err) {
-                    alert(err.response?.data?.message || 'Failed to enroll in course');
+                    alert(err.response?.data?.message || 'Ошибка при записи на курс');
                   }
                 }}
                 className="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600"
               >
                 Enroll Now
               </button>
+              {showPayment && (
+                <PaymentForm
+                  course={course}
+                  onSuccess={async () => {
+                    try {
+                      await axios.post(
+                        `/api/courses/enroll/${course._id}`,
+                        {},
+                        {
+                          headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                          }
+                        }
+                      );
+                      setShowPayment(false);
+                      navigate('/courses');
+                    } catch (err) {
+                      alert(err.response?.data?.message || 'Ошибка при записи на курс');
+                    }
+                  }}
+                  onCancel={() => setShowPayment(false)}
+                />
+              )}
             </div>
           </div>
         </div>
