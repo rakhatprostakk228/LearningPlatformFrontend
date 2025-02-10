@@ -1,90 +1,130 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { Card } from '@/components/ui/card';
 
 const PaymentForm = ({ course, onSuccess, onCancel }) => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [formData, setFormData] = useState({
+    cardNumber: '',
+    expiry: '',
+    cvc: '',
+    loading: false
+  });
+
+  const formatCardNumber = (value) => {
+    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+    const matches = v.match(/\d{4,16}/g);
+    const match = (matches && matches[0]) || '';
+    const parts = [];
+
+    for (let i = 0, len = match.length; i < len; i += 4) {
+      parts.push(match.substring(i, i + 4));
+    }
+
+    if (parts.length) {
+      return parts.join(' ');
+    } else {
+      return value;
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    
-    try {
-      await axios.post(`/api/courses/${course._id}/payment`, {
-        status: 'completed'
-      }, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      
-      onSuccess();
-    } catch (err) {
-      setError(err.response?.data?.message || 'Ошибка при оплате');
-    } finally {
-      setLoading(false);
+    setFormData(prev => ({ ...prev, loading: true }));
+
+    // Имитация проверки карты - принимаем только тестовый номер
+    if (formData.cardNumber.replace(/\s/g, '') === '4242424242424242') {
+      setTimeout(() => {
+        onSuccess();
+      }, 1500);
+    } else {
+      alert('Для тестовой оплаты используйте номер: 4242 4242 4242 4242');
+      setFormData(prev => ({ ...prev, loading: false }));
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-xl w-96 max-w-[90%]">
-        <h2 className="text-2xl font-bold mb-4">Оплата курса</h2>
-        <p className="mb-4">
-          <span className="font-medium">Курс:</span> {course.title}
-          <br />
-          <span className="font-medium">Стоимость:</span> ${course.price}
-        </p>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+      <Card className="w-full max-w-md p-6 bg-white">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-bold">Оплата курса</h2>
+          <button 
+            onClick={onCancel}
+            className="text-gray-500 hover:text-gray-700"
+          >
+            ✕
+          </button>
+        </div>
 
-        {error && (
-          <div className="bg-red-100 text-red-700 p-3 rounded mb-4">
-            {error}
-          </div>
-        )}
+        <div className="mb-4">
+          <p className="text-lg font-semibold">{course.title}</p>
+          <p className="text-green-600 text-xl">${course.price}</p>
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Номер карты
+            </label>
             <input
               type="text"
-              placeholder="1234 5678 9012 3456"
-              className="w-full border p-2 rounded"
-              required
+              maxLength="19"
+              placeholder="4242 4242 4242 4242"
+              className="w-full px-3 py-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
+              value={formData.cardNumber}
+              onChange={(e) => setFormData(prev => ({
+                ...prev,
+                cardNumber: formatCardNumber(e.target.value)
+              }))}
             />
           </div>
-
+          
           <div className="grid grid-cols-2 gap-4">
-            <input
-              type="text"
-              placeholder="MM/YY"
-              className="w-full border p-2 rounded"
-              required
-            />
-            <input
-              type="text"
-              placeholder="CVV"
-              className="w-full border p-2 rounded"
-              required
-            />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Срок действия
+              </label>
+              <input
+                type="text"
+                placeholder="MM/YY"
+                maxLength="5"
+                className="w-full px-3 py-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
+                value={formData.expiry}
+                onChange={(e) => setFormData(prev => ({
+                  ...prev,
+                  expiry: e.target.value
+                }))}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                CVC
+              </label>
+              <input
+                type="text"
+                placeholder="123"
+                maxLength="3"
+                className="w-full px-3 py-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
+                value={formData.cvc}
+                onChange={(e) => setFormData(prev => ({
+                  ...prev,
+                  cvc: e.target.value.replace(/\D/g, '').slice(0, 3)
+                }))}
+              />
+            </div>
           </div>
 
-          <div className="flex space-x-4">
-            <button
-              type="submit"
-              disabled={loading}
-              className="flex-1 bg-blue-500 text-white p-2 rounded hover:bg-blue-600 disabled:bg-blue-300"
-            >
-              {loading ? 'Обработка...' : 'Оплатить'}
-            </button>
-            <button
-              type="button"
-              onClick={onCancel}
-              className="flex-1 border border-gray-300 p-2 rounded hover:bg-gray-50"
-            >
-              Отмена
-            </button>
-          </div>
+          <button
+            type="submit"
+            disabled={formData.loading}
+            className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+          >
+            {formData.loading ? 'Обработка...' : 'Оплатить'}
+          </button>
         </form>
-      </div>
+
+        <p className="mt-4 text-sm text-gray-500 text-center">
+          Тестовый номер карты: 4242 4242 4242 4242
+        </p>
+      </Card>
     </div>
   );
 };
