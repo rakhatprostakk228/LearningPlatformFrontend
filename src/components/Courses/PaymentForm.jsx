@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Card } from '@/components/ui/card';
 
 const PaymentForm = ({ course, onSuccess, onCancel }) => {
   const [formData, setFormData] = useState({
@@ -30,7 +29,6 @@ const PaymentForm = ({ course, onSuccess, onCancel }) => {
     e.preventDefault();
     setFormData(prev => ({ ...prev, loading: true }));
 
-    // Имитация проверки карты - принимаем только тестовый номер
     if (formData.cardNumber.replace(/\s/g, '') === '4242424242424242') {
       setTimeout(() => {
         onSuccess();
@@ -43,7 +41,7 @@ const PaymentForm = ({ course, onSuccess, onCancel }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md p-6 bg-white">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-bold">Оплата курса</h2>
           <button 
@@ -68,7 +66,7 @@ const PaymentForm = ({ course, onSuccess, onCancel }) => {
               type="text"
               maxLength="19"
               placeholder="4242 4242 4242 4242"
-              className="w-full px-3 py-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               value={formData.cardNumber}
               onChange={(e) => setFormData(prev => ({
                 ...prev,
@@ -86,7 +84,7 @@ const PaymentForm = ({ course, onSuccess, onCancel }) => {
                 type="text"
                 placeholder="MM/YY"
                 maxLength="5"
-                className="w-full px-3 py-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 value={formData.expiry}
                 onChange={(e) => setFormData(prev => ({
                   ...prev,
@@ -102,7 +100,7 @@ const PaymentForm = ({ course, onSuccess, onCancel }) => {
                 type="text"
                 placeholder="123"
                 maxLength="3"
-                className="w-full px-3 py-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 value={formData.cvc}
                 onChange={(e) => setFormData(prev => ({
                   ...prev,
@@ -124,7 +122,7 @@ const PaymentForm = ({ course, onSuccess, onCancel }) => {
         <p className="mt-4 text-sm text-gray-500 text-center">
           Тестовый номер карты: 4242 4242 4242 4242
         </p>
-      </Card>
+      </div>
     </div>
   );
 };
