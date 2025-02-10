@@ -42,16 +42,6 @@ const CourseList = () => {
         return;
       }
       navigate(`/courses/${courseId}`);
-      const response = await axios.post(
-        `${API_URL}/courses/enroll/${courseId}`,
-        {},
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        }
-      );
-      alert('Successfully enrolled in course!');
     } catch (err) {
       console.error('Error enrolling in course:', err);
       alert(err.response?.data?.message || 'Failed to enroll in course');
