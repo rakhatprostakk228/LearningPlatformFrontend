@@ -56,10 +56,19 @@ const Profile = ({ user }) => {
 
   const handleUnenroll = async (courseId) => {
     try {
-      await axios.post(`/api/courses/${courseId}/unenroll`);
+      const token = localStorage.getItem('token');
+      await axios.post(
+        `https://learningplatformbackend-grqq.onrender.com/api/courses/${courseId}/unenroll`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
       setEnrolledCourses(prev => prev.filter(course => course._id !== courseId));
+      toast.success('Successfully unenrolled from course');
     } catch (err) {
-      console.error('Error unenrolling from course:', err);
+      toast.error('Error unenrolling from course');
+      console.error('Error:', err);
     }
   };
 
