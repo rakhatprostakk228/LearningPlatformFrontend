@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 axios.defaults.withCredentials = true;
 const API_URL = 'https://learningplatformbackend-grqq.onrender.com/api';
