@@ -469,7 +469,6 @@ const App = () => {
         setCurrentUser(response.data.user);
         setShowLogin(false);
       } else {
-        // Если требуется верификация
         setPendingVerification({
           email: loginData.email,
           type: 'login'
