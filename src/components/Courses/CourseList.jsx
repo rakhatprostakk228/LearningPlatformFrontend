@@ -35,16 +35,26 @@ const CourseList = () => {
   }, []);
 
   const handleEnroll = async (courseId) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('Please login to enroll');
+      return;
+    }
+    
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        alert('Please login to enroll in courses');
-        return;
+      const response = await axios.get(`${API_URL}/courses/${courseId}/payment-status`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      if (response.data.status !== 'completed') {
+        navigate(`/courses/${courseId}`); // Перенаправляем на страницу с формой оплаты
+      } else {
+        // Если уже оплачено, перенаправляем на курс
+        navigate(`/courses/${courseId}/learn`);
       }
-      navigate(`/courses/${courseId}`);
     } catch (err) {
-      console.error('Error enrolling in course:', err);
-      alert(err.response?.data?.message || 'Failed to enroll in course');
+      console.error('Error:', err);
+      alert('Failed to check payment status');
     }
   };
 

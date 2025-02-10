@@ -18,15 +18,26 @@ const Profile = ({ user }) => {
           navigate('/');
           return;
         }
-
-        // Загрузка профиля и курсов параллельно
+  
         const [profileResponse, coursesResponse] = await Promise.all([
           axios.get(`/api/auth/profile?userId=${userId}`),
-          axios.get('/api/courses/my-courses')
+          axios.get('/api/courses/my-courses', {
+            headers: { Authorization: `Bearer ${token}` }
+          })
         ]);
-
+  
+        // Получаем статусы оплаты для каждого курса
+        const coursesWithPayment = await Promise.all(
+          coursesResponse.data.map(async (course) => {
+            const paymentStatus = await axios.get(`/api/courses/${course._id}/payment-status`, {
+              headers: { Authorization: `Bearer ${token}` }
+            });
+            return { ...course, paymentStatus: paymentStatus.data.status };
+          })
+        );
+  
         setProfileData(profileResponse.data);
-        setEnrolledCourses(coursesResponse.data);
+        setEnrolledCourses(coursesWithPayment);
       } catch (error) {
         console.error('Error fetching data:', error);
         navigate('/');
@@ -34,7 +45,7 @@ const Profile = ({ user }) => {
         setLoading(false);
       }
     };
-
+  
     if (user) {
       setProfileData(user);
       fetchData();
@@ -113,26 +124,26 @@ const Profile = ({ user }) => {
           <div className="mt-6">
             <h4 className="text-lg font-semibold mb-3">My Courses</h4>
             <div className="space-y-4">
-            {enrolledCourses.map(course => (
-  <div key={course._id} className="bg-gray-50 rounded-lg p-4">
-    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-2 sm:space-y-0">
-      <div>
-        <h5 className="font-medium">{course.title}</h5>
-        <span className={`text-sm ${course.paymentStatus === 'completed' ? 'text-green-600' : 'text-yellow-600'}`}>
-          {course.paymentStatus === 'completed' ? 'Оплачено' : 'Не оплачено'}
-        </span>
-      </div>
-      <div className="flex space-x-2 w-full sm:w-auto">
-        <button
-          onClick={() => navigate(`/courses/${course._id}`)}
-          className="flex-1 sm:flex-none text-center bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600 transition-colors"
-        >
-          Continue
-        </button>
-        <button
-          onClick={() => handleUnenroll(course._id)}
-          className="flex-1 sm:flex-none text-center bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600 transition-colors"
-        >
+                {enrolledCourses.map(course => (
+      <div key={course._id} className="bg-gray-50 rounded-lg p-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-2 sm:space-y-0">
+          <div>
+            <h5 className="font-medium">{course.title}</h5>
+            <span className={`text-sm ${course.paymentStatus === 'completed' ? 'text-green-600' : 'text-yellow-600'}`}>
+              {course.paymentStatus === 'completed' ? 'Оплачено' : 'Не оплачено'}
+            </span>
+          </div>
+          <div className="flex space-x-2 w-full sm:w-auto">
+            <button
+              onClick={() => navigate(`/courses/${course._id}`)}
+              className="flex-1 sm:flex-none text-center bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600 transition-colors"
+            >
+              Continue
+            </button>
+            <button
+              onClick={() => handleUnenroll(course._id)}
+              className="flex-1 sm:flex-none text-center bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600 transition-colors"
+            >
           Unenroll
         </button>
       </div>
