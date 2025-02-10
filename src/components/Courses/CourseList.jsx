@@ -41,7 +41,7 @@ const CourseList = () => {
         alert('Please login to enroll in courses');
         return;
       }
-
+      navigate(`/courses/${courseId}`);
       const response = await axios.post(
         `${API_URL}/courses/enroll/${courseId}`,
         {},
