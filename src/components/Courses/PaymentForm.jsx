@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const PaymentForm = ({ course, onSuccess, onCancel }) => {
   const [formData, setFormData] = useState({
@@ -30,25 +31,22 @@ const PaymentForm = ({ course, onSuccess, onCancel }) => {
     e.preventDefault();
     setFormData(prev => ({ ...prev, loading: true }));
   
-    if (formData.cardNumber.replace(/\s/g, '') === '4242424242424242') {
-      try {
+    try {
+      if (formData.cardNumber.replace(/\s/g, '') === '4242424242424242') {
         const token = localStorage.getItem('token');
         await axios.post(
           `https://learningplatformbackend-grqq.onrender.com/api/courses/${course._id}/payment`,
           {},
-          {
-            headers: { Authorization: `Bearer ${token}` }
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
-        setTimeout(() => {
-          onSuccess();
-        }, 1500);
-      } catch (err) {
-        alert('Ошибка при обработке платежа');
-        setFormData(prev => ({ ...prev, loading: false }));
+        toast.success('Оплата прошла успешно');
+        navigate('/courses'); // Перенаправляем на страницу My Courses
+      } else {
+        toast.warning('Используйте тестовый номер карты: 4242 4242 4242 4242');
       }
-    } else {
-      alert('Для тестовой оплаты используйте номер: 4242 4242 4242 4242');
+    } catch (err) {
+      toast.error('Ошибка при обработке платежа');
+    } finally {
       setFormData(prev => ({ ...prev, loading: false }));
     }
   };

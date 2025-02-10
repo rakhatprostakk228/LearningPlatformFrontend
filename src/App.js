@@ -11,6 +11,8 @@ import MyCourses from './components/Courses/MyCourses';
 import CourseDetail from './components/Courses/CourseDetail';
 import LessonView from './components/Courses/LessonView';
 import VerificationForm from './components/VerificationForm';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api/auth';
 axios.defaults.baseURL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
@@ -612,6 +614,18 @@ const App = () => {
           />
         )}
       </div>
+      <ToastContainer
+  position="top-right"
+  autoClose={3000}
+  hideProgressBar={false}
+  newestOnTop
+  closeOnClick
+  rtl={false}
+  pauseOnFocusLoss
+  draggable
+  pauseOnHover
+  theme="light"
+/>
     </Router>
   );
 };
