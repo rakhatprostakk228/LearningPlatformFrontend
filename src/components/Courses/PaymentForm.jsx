@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 const PaymentForm = ({ course, onSuccess, onCancel }) => {
   const [formData, setFormData] = useState({
@@ -28,11 +29,24 @@ const PaymentForm = ({ course, onSuccess, onCancel }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormData(prev => ({ ...prev, loading: true }));
-
+  
     if (formData.cardNumber.replace(/\s/g, '') === '4242424242424242') {
-      setTimeout(() => {
-        onSuccess();
-      }, 1500);
+      try {
+        const token = localStorage.getItem('token');
+        await axios.post(
+          `https://learningplatformbackend-grqq.onrender.com/api/courses/${course._id}/payment`,
+          {},
+          {
+            headers: { Authorization: `Bearer ${token}` }
+          }
+        );
+        setTimeout(() => {
+          onSuccess();
+        }, 1500);
+      } catch (err) {
+        alert('Ошибка при обработке платежа');
+        setFormData(prev => ({ ...prev, loading: false }));
+      }
     } else {
       alert('Для тестовой оплаты используйте номер: 4242 4242 4242 4242');
       setFormData(prev => ({ ...prev, loading: false }));
